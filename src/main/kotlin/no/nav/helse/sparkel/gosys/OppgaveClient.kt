@@ -21,7 +21,7 @@ internal class OppgaveClient(
     ): JsonNode {
 
         val url =
-            "${baseUrl}/api/v1/oppgaver?statuskategori=AAPEN&tema=SYK&aktoerId=${aktørId}&limit=0"
+            "${baseUrl}/api/v1/oppgaver?statuskategori=AAPEN&tema=SYK&aktoerId=${aktørId}&limit=1"
 
         val (responseCode, responseBody) = with(URL(url).openConnection() as HttpURLConnection) {
             requestMethod = "GET"

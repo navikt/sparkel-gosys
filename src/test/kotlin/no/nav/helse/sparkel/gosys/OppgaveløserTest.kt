@@ -151,7 +151,46 @@ internal class OppgaveløserTest {
                         .withBody(
                             """{
                                       "antallTreffTotalt": 1,
-                                      "oppgaver": []
+                                      "oppgaver": [
+                                            {
+                                                  "id": 5436732,
+                                                  "tildeltEnhetsnr": "0100",
+                                                  "endretAvEnhetsnr": "0101",
+                                                  "opprettetAvEnhetsnr": "0200",
+                                                  "journalpostId": "84938201",
+                                                  "journalpostkilde": "AS36",
+                                                  "behandlesAvApplikasjon": "FS22",
+                                                  "saksreferanse": "84942299",
+                                                  "bnr": "11250199559",
+                                                  "samhandlernr": "80000999999",
+                                                  "aktoerId": "1234567891113",
+                                                  "identer": 12345678911,
+                                                  "orgnr": "979312059",
+                                                  "tilordnetRessurs": "Z998323",
+                                                  "beskrivelse": "string",
+                                                  "temagruppe": "ANSOS",
+                                                  "tema": "AAP",
+                                                  "behandlingstema": "ab0203",
+                                                  "oppgavetype": "HAST_BANK_OPPLYS",
+                                                  "behandlingstype": "ae0001",
+                                                  "versjon": 1,
+                                                  "mappeId": 848,
+                                                  "opprettetAv": "string",
+                                                  "endretAv": "string",
+                                                  "prioritet": "HOY",
+                                                  "status": "UNDER_BEHANDLING",
+                                                  "metadata": {
+                                                    "additionalProp1": "string",
+                                                    "additionalProp2": "string",
+                                                    "additionalProp3": "string"
+                                                  },
+                                                  "fristFerdigstillelse": {},
+                                                  "aktivDato": {},
+                                                  "opprettetTidspunkt": "2020-10-07T07:58:47.791Z",
+                                                  "ferdigstiltTidspunkt": "2020-10-07T07:58:47.791Z",
+                                                  "endretTidspunkt": "2020-10-07T07:58:47.791Z"
+                                                }
+                                      ]
                                     }
                                     """
                         )
