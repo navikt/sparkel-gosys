@@ -1,4 +1,4 @@
-package no.nav.helse.sparkel.institusjonsopphold
+package no.nav.helse.sparkel.gosys
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper

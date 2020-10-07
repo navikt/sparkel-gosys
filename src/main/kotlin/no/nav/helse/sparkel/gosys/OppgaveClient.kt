@@ -1,4 +1,4 @@
-package no.nav.helse.sparkel.institusjonsopphold
+package no.nav.helse.sparkel.gosys
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -6,7 +6,7 @@ import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
 
-internal class InstitusjonsoppholdClient(
+internal class OppgaveClient(
     private val baseUrl: String,
     private val stsClient: StsRestClient
 ) {
@@ -15,11 +15,13 @@ internal class InstitusjonsoppholdClient(
         private val objectMapper = ObjectMapper()
     }
 
-    internal fun hentInstitusjonsopphold(
-        fødselsnummer: String,
+    internal fun hentÅpneOppgaver(
+        aktørId: String,
         behovId: String
     ): JsonNode {
-        val url = "${baseUrl}/api/v1/person/institusjonsopphold"
+
+        val url =
+            "${baseUrl}/api/v1/oppgaver?statuskategori=AAPEN&tema=SYK&aktoerId=${aktørId}&limit=0"
 
         val (responseCode, responseBody) = with(URL(url).openConnection() as HttpURLConnection) {
             requestMethod = "GET"
@@ -27,16 +29,14 @@ internal class InstitusjonsoppholdClient(
             readTimeout = 10000
             setRequestProperty("Authorization", "Bearer ${stsClient.token()}")
             setRequestProperty("Accept", "application/json")
-            setRequestProperty("Nav-Call-Id", behovId)
-            setRequestProperty("Nav-Consumer-Id", "srvsparkelinst")
-            setRequestProperty("Nav-Personident", fødselsnummer)
+            setRequestProperty("X-Correlation-ID", behovId)
 
             val stream: InputStream? = if (responseCode < 300) this.inputStream else this.errorStream
             responseCode to stream?.bufferedReader()?.readText()
         }
 
         if (responseCode >= 300 || responseBody == null) {
-            throw RuntimeException("unknown error (responseCode=$responseCode) from Inst2")
+            throw RuntimeException("unknown error (responseCode=$responseCode) from oppgave")
         }
 
         return objectMapper.readTree(responseBody)

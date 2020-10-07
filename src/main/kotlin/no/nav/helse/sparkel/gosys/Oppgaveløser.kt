@@ -1,20 +1,21 @@
-package no.nav.helse.sparkel.institusjonsopphold
+package no.nav.helse.sparkel.gosys
 
-import com.fasterxml.jackson.databind.JsonNode
 import net.logstash.logback.argument.StructuredArguments.keyValue
-import no.nav.helse.rapids_rivers.*
-import no.nav.helse.sparkel.institusjonsopphold.Institusjonsoppholdperiode.Companion.filtrer
+import no.nav.helse.rapids_rivers.JsonMessage
+import no.nav.helse.rapids_rivers.MessageProblems
+import no.nav.helse.rapids_rivers.RapidsConnection
+import no.nav.helse.rapids_rivers.River
 import org.slf4j.LoggerFactory
 
-internal class Institusjonsoppholdløser(
+internal class Oppgaveløser(
     rapidsConnection: RapidsConnection,
-    private val institusjonsoppholdService: InstitusjonsoppholdService
+    private val oppgaveService: OppgaveService
 ) : River.PacketListener {
 
     private val sikkerlogg = LoggerFactory.getLogger("tjenestekall")
 
     companion object {
-        const val behov = "Institusjonsopphold"
+        const val behov = "ÅpneOppgaver"
     }
 
     init {
@@ -22,10 +23,7 @@ internal class Institusjonsoppholdløser(
             validate { it.demandAll("@behov", listOf(behov)) }
             validate { it.rejectKey("@løsning") }
             validate { it.requireKey("@id") }
-            validate { it.requireKey("fødselsnummer") }
-            validate { it.requireKey("vedtaksperiodeId") }
-            validate { it.require("institusjonsoppholdFom", JsonNode::asLocalDate) }
-            validate { it.require("institusjonsoppholdTom", JsonNode::asLocalDate) }
+            validate { it.requireKey("aktørId") }
         }.register(this)
     }
 
@@ -35,21 +33,20 @@ internal class Institusjonsoppholdløser(
 
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
         sikkerlogg.info("mottok melding: ${packet.toJson()}")
-        val fom = packet["institusjonsoppholdFom"].asLocalDate()
-        val tom = packet["institusjonsoppholdTom"].asLocalDate()
-        institusjonsoppholdService.løsningForBehov(
+        oppgaveService.løsningForBehov(
             packet["@id"].asText(),
-            packet["vedtaksperiodeId"].asText(),
-            packet["fødselsnummer"].asText()
+            packet["aktørId"].asText()
         ).let { løsning ->
             packet["@løsning"] = mapOf(
-                behov to (løsning?.map { Institusjonsoppholdperiode(it) }?.filtrer(fom, tom) ?: emptyList())
+                behov to mapOf(
+                    "antall" to (løsning?.takeUnless { it.isMissingNode }?.let { it["antallTreffTotalt"].asInt() }),
+                    "oppslagFeilet" to (løsning == null)
+                )
             )
             context.send(packet.toJson().also { json ->
                 sikkerlogg.info(
                     "sender svar {} for {}:\n\t{}",
                     keyValue("id", packet["@id"].asText()),
-                    keyValue("vedtaksperiodeId", packet["vedtaksperiodeId"].asText()),
                     json
                 )
             })
