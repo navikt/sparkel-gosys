@@ -45,7 +45,7 @@ internal class Oppgaveløser(
             )
             context.send(packet.toJson().also { json ->
                 sikkerlogg.info(
-                    "sender svar {} for {}:\n\t{}",
+                    "sender svar {} for {}",
                     keyValue("id", packet["@id"].asText()),
                     json
                 )
