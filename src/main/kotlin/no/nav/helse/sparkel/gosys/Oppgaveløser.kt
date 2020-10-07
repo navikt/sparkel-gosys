@@ -23,7 +23,7 @@ internal class Oppgaveløser(
             validate { it.demandAll("@behov", listOf(behov)) }
             validate { it.rejectKey("@løsning") }
             validate { it.requireKey("@id") }
-            validate { it.requireKey("aktørId") }
+            validate { it.requireKey("ÅpneOppgaver.aktørId") }
         }.register(this)
     }
 
@@ -35,7 +35,7 @@ internal class Oppgaveløser(
         sikkerlogg.info("mottok melding: ${packet.toJson()}")
         oppgaveService.løsningForBehov(
             packet["@id"].asText(),
-            packet["aktørId"].asText()
+            packet["ÅpneOppgaver.aktørId"].asText()
         ).let { løsning ->
             packet["@løsning"] = mapOf(
                 behov to mapOf(

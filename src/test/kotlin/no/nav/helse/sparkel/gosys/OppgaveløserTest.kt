@@ -104,7 +104,9 @@ internal class OppgaveløserTest {
             "@id" : "id",
             "@opprettet" : "2020-05-18",
             "spleisBehovId" : "spleisBehovId",
-            "aktørId" : "aktørId"
+            "ÅpneOppgaver": {
+                "aktørId" : "aktørId"
+            }
         }
         """
 
@@ -116,7 +118,9 @@ internal class OppgaveløserTest {
             "@id" : "id2",
             "@opprettet" : "2020-05-18",
             "spleisBehovId" : "spleisBehovId",
-            "aktørId" : "aktørId"
+            "ÅpneOppgaver": {
+                "aktørId" : "aktørId"
+            }
         }
         """
 
