@@ -3,6 +3,7 @@ package no.nav.helse.sparkel.gosys
 import net.logstash.logback.argument.StructuredArguments.keyValue
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageProblems
+import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import org.slf4j.LoggerFactory
@@ -27,11 +28,11 @@ internal class Oppgaveløser(
         }.register(this)
     }
 
-    override fun onError(problems: MessageProblems, context: RapidsConnection.MessageContext) {
+    override fun onError(problems: MessageProblems, context: MessageContext) {
         sikkerlogg.error("forstod ikke $behov med melding\n${problems.toExtendedReport()}")
     }
 
-    override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
+    override fun onPacket(packet: JsonMessage, context: MessageContext) {
         sikkerlogg.info("mottok melding: ${packet.toJson()}")
         oppgaveService.løsningForBehov(
             packet["@id"].asText(),
@@ -43,7 +44,7 @@ internal class Oppgaveløser(
                     "oppslagFeilet" to (løsning == null)
                 )
             )
-            context.send(packet.toJson().also { json ->
+            context.publish(packet.toJson().also { json ->
                 sikkerlogg.info(
                     "sender svar {} for {}",
                     keyValue("id", packet["@id"].asText()),
